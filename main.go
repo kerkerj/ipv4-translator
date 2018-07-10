@@ -87,16 +87,18 @@ func Recover(h http.Handler) http.Handler {
 		defer func() {
 			r := recover()
 
-			switch t := r.(type) {
-			case string:
-				err = errors.New(t)
-			case error:
-				err = t
-			default:
-				err = errors.New("Unknown error")
+			if r != nil {
+				switch t := r.(type) {
+				case string:
+					err = errors.New(t)
+				case error:
+					err = t
+				default:
+					err = errors.New("Unknown error")
+				}
+				applogger.Println(err.Error())
+				http.Error(w, err.Error(), http.StatusInternalServerError)
 			}
-			applogger.Println(err.Error())
-			http.Error(w, err.Error(), http.StatusInternalServerError)
 		}()
 		h.ServeHTTP(w, r)
 	})
