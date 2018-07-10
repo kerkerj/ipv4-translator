@@ -1,0 +1,4 @@
+
+# ignore bin/* except .keep
+bin/*
+!bin/.keep
